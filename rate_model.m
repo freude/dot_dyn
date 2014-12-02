@@ -40,10 +40,14 @@ classdef rate_model
             
             if obj.states(j1)==obj.states(j2)
                 dE=j2-j1;
-                if (dE==1)&&(j2==2)
-                    G=5e14;
-                elseif dE==2
-                    G=1.5e14;
+                if (dE==1)
+                    G=0*5e14;
+                elseif (dE==2)
+                    G=0*1.5e14;                    
+                elseif (dE==-1)
+                    G=-0*5e14;                    
+                elseif (dE==-2)
+                    G=-0*1.5e14;
                 else
                     G=0;
                 end;
@@ -56,13 +60,10 @@ classdef rate_model
                 Vsd=V(1);
                 d=5e-9;
                 
-                if obj.states(j1)>obj.states(j2)
-                    
+                if obj.states(j1)>obj.states(j2)                    
                     dE=obj.spectr(j1)-obj.spectr(j2)-q*Vsd+q*vv;
-                    G=0.1e11*obj.J_s.transparency(d,obj.spectr(j1),0)*ff_q(dE,obj.T);
-                    
-                else
-                    
+                    G=-0.1e11*obj.J_s.transparency(d,obj.spectr(j1),0)*ff_q(dE,obj.T);                    
+                else                    
                     dE=-obj.spectr(j2)+obj.spectr(j1)+q*Vsd-q*vv;
                     G=0.1e11*obj.J_s.transparency(d,obj.spectr(j2),0)*ff_q(dE,obj.T);
                 end;               
@@ -74,7 +75,7 @@ classdef rate_model
                 
                 if obj.states(j1)>obj.states(j2) % give an electron                    
                     dE=obj.spectr(j1)-obj.spectr(j2)-q*Vsd+q*vv;
-                    G=1e12*obj.J_tip.transparency(d,obj.spectr(j1)+q*vv,Vsd)*ff_q(dE,obj.T);                    
+                    G=-1e12*obj.J_tip.transparency(d,obj.spectr(j1)+q*vv,Vsd)*ff_q(dE,obj.T);                    
                 else                           % take an electron                    
                     dE=-obj.spectr(j2)+obj.spectr(j1)+q*Vsd-q*vv;
                     G=1e12*obj.J_tip.transparency(d,obj.spectr(j2)-q*vv,Vsd)*ff_q(dE,obj.T);                    
