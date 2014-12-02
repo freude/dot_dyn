@@ -25,14 +25,26 @@ qd=rate_model()
 
 
 vs=0:-0.01:-1.5;
-I=qd.current_st(vs);
+[I,p1]=qd.current_st(vs);
+figure(1)
 hold on
 plot(vs(1:end-1),diff(I)./diff(vs));
 
+figure(2)
+
+for j=1:length(vs)
+    rate1(j)=qd.rates(1,2,'D', [0.0 vs(j)]);
+    rate2(j)=qd.rates(1,3,'D', [0.0 vs(j)]);
+    rate3(j)=qd.rates(1,4,'D', [0.0 vs(j)]);
+end;
+
+hold on
+plot(vs,rate1,vs,rate2,vs,rate3)
+
 % for j=1:length(vs)
-%     rate1(j)=qd.rates(2,1,'S', [0.0 vs(j)]);
-%     rate2(j)=qd.rates(3,1,'S', [0.0 vs(j)]);
-%     rate3(j)=qd.rates(4,1,'S', [0.0 vs(j)]);
+%     rate1(j)=qd.rates(2,1,'D', [0.0 vs(j)]);
+%     rate2(j)=qd.rates(3,1,'D', [0.0 vs(j)]);
+%     rate3(j)=qd.rates(4,1,'D', [0.0 vs(j)]);
 % end;
 % 
 % hold on

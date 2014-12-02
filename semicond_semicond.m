@@ -11,7 +11,7 @@ classdef semicond_semicond
         
         function obj = semicond_semicond()
             q=1.6e-19;
-            obj.phi=0.02*q; 
+            obj.phi=0.09*q; 
         end
         
         function T=transparency(obj,d,E,V)
