@@ -14,7 +14,7 @@ classdef semicond_metal
         
         function obj = semicond_metal()
             q=1.6e-19;
-            obj.phi_s=4.85*q; % work_functions
+            obj.phi_s=0*4.85*q+5.1*q; % work_functions
             obj.phi_m=5.1*q; % work_functions
             obj.phi=0.5*(obj.phi_m+obj.phi_s); % work_functions
             obj.R=0.1e-9;

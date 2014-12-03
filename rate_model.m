@@ -40,14 +40,12 @@ classdef rate_model
             
             if obj.states(j1)==obj.states(j2)
                 dE=j2-j1;
-                if (dE==1)
-                    G=0*5e14;
-                elseif (dE==2)
-                    G=0*1.5e14;                    
-                elseif (dE==-1)
-                    G=-0*5e14;                    
-                elseif (dE==-2)
-                    G=-0*1.5e14;
+                if (dE==1)&&(j1==2)
+                    G=1e13;
+                elseif (dE==1)&&(j1==3)
+                    G=2e13;                    
+                elseif (dE==2)&&(j1==2)
+                    G=1e13;                    
                 else
                     G=0;
                 end;
@@ -62,23 +60,23 @@ classdef rate_model
                 
                 if obj.states(j1)>obj.states(j2)                    
                     dE=obj.spectr(j1)-obj.spectr(j2)-q*Vsd+q*vv;
-                    G=-0.1e11*obj.J_s.transparency(d,obj.spectr(j1),0)*ff_q(dE,obj.T);                    
+                    G=0.1e14*obj.J_s.transparency(d,obj.spectr(j1),0)*ff_q(dE,obj.T);                    
                 else                    
                     dE=-obj.spectr(j2)+obj.spectr(j1)+q*Vsd-q*vv;
-                    G=0.1e11*obj.J_s.transparency(d,obj.spectr(j2),0)*ff_q(dE,obj.T);
+                    G=0.1e14*obj.J_s.transparency(d,obj.spectr(j2),0)*ff_q(dE,obj.T);
                 end;               
                 
             elseif flag=='D'
                 
                 Vsd=V(2);
-                d=0.1e-9;
+                d=0.2e-9;
                 
                 if obj.states(j1)>obj.states(j2) % give an electron                    
                     dE=obj.spectr(j1)-obj.spectr(j2)-q*Vsd+q*vv;
-                    G=-1e12*obj.J_tip.transparency(d,obj.spectr(j1)+q*vv,Vsd)*ff_q(dE,obj.T);                    
+                    G=1e12*obj.J_tip.transparency(d,obj.spectr(j1)+q*vv,Vsd-q*vv)*ff_q(dE,obj.T);                    
                 else                           % take an electron                    
                     dE=-obj.spectr(j2)+obj.spectr(j1)+q*Vsd-q*vv;
-                    G=1e12*obj.J_tip.transparency(d,obj.spectr(j2)-q*vv,Vsd)*ff_q(dE,obj.T);                    
+                    G=1e12*obj.J_tip.transparency(d,obj.spectr(j2)-q*vv,Vsd-q*vv)*ff_q(dE,obj.T);                    
                 end;                                
             end;            
             
@@ -136,7 +134,7 @@ classdef rate_model
             end;            
         end
         
-        function [I,p1] = current_st(obj,vs)
+        function [I,p1,Gamma1] = current_st(obj,vs)
             %             a=obj.states(1:end-1)-obj.states(2:end);
             %             b=find(a);
             %             num_ch_states=length(b)+1;
@@ -153,9 +151,9 @@ classdef rate_model
                     for j1=1:length(obj.spectr)
                         
                         if (obj.states(j1)-obj.states(j))==1
-                            Gamma(j)=Gamma(j)-obj.rates(j1,j,'S', [0.0 vs(i)]);
-                        elseif (obj.states(j1)-obj.states(j))==-1
                             Gamma(j)=Gamma(j)+obj.rates(j1,j,'S', [0.0 vs(i)]);
+                        elseif (obj.states(j1)-obj.states(j))==-1
+                            Gamma(j)=Gamma(j)-obj.rates(j1,j,'S', [0.0 vs(i)]);
                         else
                             
                         end;
@@ -169,8 +167,9 @@ classdef rate_model
                 p=M\B;
                 p=p';
                 
-                I(i)=q*sum(p.*Gamma);
+                I(i)=q*sum(p(1:end).*Gamma(1:end));
                 p1(:,i)=p;
+                Gamma1(:,i)=Gamma;
             end;            
         end        
         

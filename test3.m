@@ -18,14 +18,13 @@ qd=rate_model()
 
 % vs=-1.5;
 % 
-% [T,p] = ode45(@(t,y) RS1(t,y,qd,vs), [0 2e-9], [0 1 0 0]);
+% [T,p] = ode45(@(t,y) RS1(t,y,qd,vs), [0 5e-9], [0 1 0 0]);
 % 
 % hold on
 % plot(T,p(:,:))
 
-
 vs=0:-0.01:-1.5;
-[I,p1]=qd.current_st(vs);
+[I,p1,Gamma]=qd.current_st(vs);
 figure(1)
 hold on
 plot(vs(1:end-1),diff(I)./diff(vs));
@@ -41,14 +40,46 @@ end;
 hold on
 plot(vs,rate1,vs,rate2,vs,rate3)
 
-% for j=1:length(vs)
-%     rate1(j)=qd.rates(2,1,'D', [0.0 vs(j)]);
-%     rate2(j)=qd.rates(3,1,'D', [0.0 vs(j)]);
-%     rate3(j)=qd.rates(4,1,'D', [0.0 vs(j)]);
-% end;
-% 
-% hold on
-% plot(vs,rate1,vs,rate2,vs,rate3)
+
+
+for j=1:length(vs)
+    rate1(j)=qd.rates(2,1,'D', [0.0 vs(j)]);
+    rate2(j)=qd.rates(3,1,'D', [0.0 vs(j)]);
+    rate3(j)=qd.rates(4,1,'D', [0.0 vs(j)]);
+end;
+
+hold on
+plot(vs,rate1,vs,rate2,vs,rate3)
+
+figure(3)
+
+for j=1:length(vs)
+    rate1(j)=qd.rates(1,2,'S', [0.0 vs(j)]);
+    rate2(j)=qd.rates(1,3,'S', [0.0 vs(j)]);
+    rate3(j)=qd.rates(1,4,'S', [0.0 vs(j)]);
+end;
+
+hold on
+plot(vs,rate1,vs,rate2,vs,rate3)
+
+
+
+for j=1:length(vs)
+    rate1(j)=qd.rates(2,1,'S', [0.0 vs(j)]);
+    rate2(j)=qd.rates(3,1,'S', [0.0 vs(j)]);
+    rate3(j)=qd.rates(4,1,'S', [0.0 vs(j)]);
+end;
+
+hold on
+plot(vs,rate1,vs,rate2,vs,rate3)
+
+figure(4)
+hold on
+plot(vs,p1(:,:)')
+
+figure(5)
+hold on
+plot(vs,Gamma(:,:)')
 
 
 % I=zeros(1,length(T));
@@ -62,4 +93,3 @@ plot(vs,rate1,vs,rate2,vs,rate3)
 % 
 % figure(2)
 % plot(T,p(:,:),T,V1./max(V1),T,V2./max(V2))
-
