@@ -11,18 +11,14 @@ classdef semicond_semicond
         
         function obj = semicond_semicond()
             q=1.6e-19;
-            obj.phi=0.09*q; 
+            obj.phi=0.01*q; 
         end
         
         function T=transparency(obj,d,E,V)
-            h=6.63e-34;
-            m=0.19*9.1e-31;
-            q=1.6e-19;
-            ph=obj.phi*(1-0.25*q*V/obj.phi)^2;
-            gamma=sqrt(2)*pi*pi/h*sqrt(m/obj.phi)*d;
+            h=1.05e-34;
+            m=9.1e-31;
 
-            T=1/(1+exp(gamma*(ph-E)));
-            %T=0.00001;
+            T=1/(1+exp(gamma*));
         end
     end
 end

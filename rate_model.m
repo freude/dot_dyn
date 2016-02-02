@@ -26,7 +26,7 @@ classdef rate_model
             obj.states=[1 2 2 2];   %charge state vs excitation spectrum    
             obj.x=5e-9;
             obj.L=10e-9;
-            obj.alpha=0.025;            
+            obj.alpha=0.1;            
         end
                
         function G=rates(obj,j1,j2,flag,V)
@@ -37,15 +37,16 @@ classdef rate_model
             q=1.6e-19;            
             
             vv=(V(2)-V(1))*obj.alpha*(1-obj.x/obj.L);
+
             
             if obj.states(j1)==obj.states(j2)
                 dE=j2-j1;
                 if (dE==1)&&(j1==2)
-                    G=1e13;
+                    G=0*1e13;
                 elseif (dE==1)&&(j1==3)
-                    G=2e13;                    
+                    G=0*2e13;                    
                 elseif (dE==2)&&(j1==2)
-                    G=1e13;                    
+                    G=0*1e13;                    
                 else
                     G=0;
                 end;
@@ -69,14 +70,14 @@ classdef rate_model
             elseif flag=='D'
                 
                 Vsd=V(2);
-                d=0.2e-9;
+                d=0.01e-9;
                 
                 if obj.states(j1)>obj.states(j2) % give an electron                    
                     dE=obj.spectr(j1)-obj.spectr(j2)-q*Vsd+q*vv;
-                    G=1e12*obj.J_tip.transparency(d,obj.spectr(j1)+q*vv,Vsd-q*vv)*ff_q(dE,obj.T);                    
+                    G=1e12*obj.J_tip.transparency(d,obj.spectr(j1)-obj.spectr(j2)+q*vv,Vsd)*ff_q(dE,obj.T);                    
                 else                           % take an electron                    
                     dE=-obj.spectr(j2)+obj.spectr(j1)+q*Vsd-q*vv;
-                    G=1e12*obj.J_tip.transparency(d,obj.spectr(j2)-q*vv,Vsd-q*vv)*ff_q(dE,obj.T);                    
+                    G=1e12*obj.J_tip.transparency(d,-obj.spectr(j2)+obj.spectr(j1)-q*vv,Vsd)*ff_q(dE,obj.T);                    
                 end;                                
             end;            
             
@@ -101,6 +102,7 @@ classdef rate_model
             for j=1:length(obj.spectr)
                 M(j, j)=-sum(M(:,j));
             end;
+                        
             
         end
         
@@ -142,18 +144,18 @@ classdef rate_model
             
             I=zeros(1,length(vs));
             p1=zeros(4,length(vs));
+            Gamma1=zeros(4,length(vs));
             
             for i=1:length(vs)
                 
                 Gamma=zeros(1,length(obj.spectr));
                 
                 for j=1:length(obj.spectr)
-                    for j1=1:length(obj.spectr)
-                        
+                    for j1=1:length(obj.spectr)                        
                         if (obj.states(j1)-obj.states(j))==1
-                            Gamma(j)=Gamma(j)+obj.rates(j1,j,'S', [0.0 vs(i)]);
+                            Gamma(j)=Gamma(j)+obj.rates(j1,j,'D', [0.0 vs(i)]);
                         elseif (obj.states(j1)-obj.states(j))==-1
-                            Gamma(j)=Gamma(j)-obj.rates(j1,j,'S', [0.0 vs(i)]);
+                            Gamma(j)=Gamma(j)+obj.rates(j1,j,'D', [0.0 vs(i)]);
                         else
                             
                         end;
@@ -167,7 +169,7 @@ classdef rate_model
                 p=M\B;
                 p=p';
                 
-                I(i)=q*sum(p(1:end).*Gamma(1:end));
+                I(i)=q*sum(p.*Gamma);
                 p1(:,i)=p;
                 Gamma1(:,i)=Gamma;
             end;            

@@ -1,0 +1,84 @@
+%function G=rate_matrix1(VV,qd)
+
+clear all
+ q=1.6e-19;
+ 
+ c1=300.*q;
+
+
+c12=100.*q;
+c1s=300.*q;
+c2s=300.*q;
+
+Cdv=-[c1s 0 c1; 0 c2s c1];
+
+C=[c12-sum(Cdv(1,:)) -c12; -c12 c12-sum(Cdv(2,:))];
+qd=sqd1(C,Cdv);
+% 
+% 
+% % vector of states
+
+V=-40:0.1:40;
+Na=zeros(1,length(V));
+
+% for j=1:length(V)
+%     VV=[15e-3; 15e-3; V(j)*1e-3];
+%     Na=qd.stable_conf(VV);
+%     N1(j)=Na(1);
+%     N2(j)=Na(2);
+% end;
+
+VV=[15e-3; 15e-3; 15e-3];
+
+%--------------------------------------------------------
+
+q=1.6e-19;
+vs=combvec(6:14,6:14);
+vs=vs(end:-1:1,:);
+s=size(vs);
+E=zeros(s(2),s(2));
+G=zeros(s(2),s(2));
+E1=zeros(s(2));
+% for j=1:length(VVV)    
+%             VV=[-V(31)*1e-3;  -V(31)*1e-3; -VVV(j)];
+    for j1=1:s(2)
+
+        E1(j1)=qd.SD_SET(VV, vs(:,j1));
+        for j2=1:s(2)
+            if ((vs(2,j1)-vs(2,j2))~=0)&&((vs(1,j1)-vs(1,j2))==0)
+                if ((vs(2,j1)-vs(2,j2))==1) %release an electron
+                    E(j1,j2)=E1(j1)-qd.SD_SET(VV, vs(:,j2));
+                    G(j1,j2)=1/q/qd.RS/q*ff((q*(-VV(3)+E(j1,j2))),qd.T/10);
+                elseif ((vs(2,j1)-vs(2,j2))==-1) %take an electron
+                    E(j1,j2)=-E1(j1)+qd.SD_SET(VV, vs(:,j2));
+                    G(j1,j2)=1/q/qd.RS/q*ff((q*(-VV(3)-E(j1,j2))),qd.T/10);
+                else
+                    G(j1,j2)=0;
+                end;
+            elseif (((vs(2,j1)-vs(2,j2))==1)&&((vs(1,j1)-vs(1,j2))==-1))||(((vs(2,j1)-vs(2,j2))==-1)&&((vs(1,j1)-vs(1,j2))==1))
+                %             if ((vs(1,j1)-vs(1,j2))==1) %release an electron
+                %                 G(j1,j2)=1/q/qd.RS*ff_q(-(q*(E(j1,j2))),qd.T);
+                %             elseif ((vs(1,j1)-vs(1,j2))==-1) %take an electron
+                %                 G(j1,j2)=1/q/qd.RS*ff_q((q*(E(j1,j2))),qd.T);
+                %             else
+                %                 G(j1,j2)=0;
+                %             end;
+                E(j1,j2)=E1(j1)-qd.SD_SET(VV, vs(:,j2));
+%                 if E(j1,j2)==0
+%                     G(j1,j2)=1e6;
+%                 else
+                    G(j1,j2)=1/q/qd.RS/q*ff((q*((E(j1,j2)))),qd.T/10);
+%                 end;
+            else
+                G(j1,j2)=0;
+            end;
+        end;
+    end;
+% end;
+
+for j=1:s(2)    
+    G(j,j)=0;
+    G(j,j)=-sum(G(:,j));
+end;
+
+% plot(E1)

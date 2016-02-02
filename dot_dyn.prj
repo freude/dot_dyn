@@ -343,8 +343,6 @@
          <param.grt.customcode.CustomSource/>
          <param.grt.customcode.CustomLibrary/>
          <param.grt.PostCodeGenCommand/>
-         <param.grt.TargetFunctionLibrary/>
-         <param.ert.TargetFunctionLibrary/>
          <param.SameHardware/>
          <var.instance.enabled.Production/>
          <var.instance.enabled.Target/>

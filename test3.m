@@ -23,7 +23,7 @@ qd=rate_model()
 % hold on
 % plot(T,p(:,:))
 
-vs=0:-0.01:-1.5;
+vs=0:-0.001:-0.5;
 [I,p1,Gamma]=qd.current_st(vs);
 figure(1)
 hold on
@@ -62,8 +62,6 @@ end;
 hold on
 plot(vs,rate1,vs,rate2,vs,rate3)
 
-
-
 for j=1:length(vs)
     rate1(j)=qd.rates(2,1,'S', [0.0 vs(j)]);
     rate2(j)=qd.rates(3,1,'S', [0.0 vs(j)]);
@@ -81,15 +79,14 @@ figure(5)
 hold on
 plot(vs,Gamma(:,:)')
 
+I=zeros(1,length(T));
 
-% I=zeros(1,length(T));
-% 
-% for j=1:length(T)
-%     M=qd.rate_matrix_s([V1(j);V2(j);V3(j)]);
-%     for j1=2:qd.Nmax-1
-%         I(j)=I(j)+p(j,j1)*(M(j1+1,j1)-M(j1-1,j1));
-%     end;
-% end;
-% 
-% figure(2)
-% plot(T,p(:,:),T,V1./max(V1),T,V2./max(V2))
+for j=1:length(T)
+    M=qd.rate_matrix_s([V1(j);V2(j);V3(j)]);
+    for j1=2:qd.Nmax-1
+        I(j)=I(j)+p(j,j1)*(M(j1+1,j1)-M(j1-1,j1));
+    end;
+end;
+
+figure(2)
+plot(T,p(:,:),T,V1./max(V1),T,V2./max(V2))
